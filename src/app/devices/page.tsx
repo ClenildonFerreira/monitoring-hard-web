@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getDevices, createDevice } from "../../services/devices";
+import { getDevices, createDevice, deleteDevice } from "../../services/devices";
 import { Device } from "../../types/device";
 
 export default function DevicesPage() {
@@ -11,6 +11,7 @@ export default function DevicesPage() {
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [creating, setCreating] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const fetchDevices = async () => {
     setLoading(true);
@@ -48,6 +49,21 @@ export default function DevicesPage() {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    if (!window.confirm("Tem certeza que deseja deletar este dispositivo?")) return;
+    setDeletingId(id);
+    setError(null);
+    try {
+      await deleteDevice(id);
+      fetchDevices();
+    } catch (e) {
+      if (e instanceof Error) setError(e.message);
+      else setError("Erro ao deletar dispositivo");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   return (
     <main style={{ padding: 24 }}>
       <h1>Dispositivos</h1>
@@ -76,12 +92,13 @@ export default function DevicesPage() {
               <th style={{ borderBottom: '1px solid #ccc', textAlign: 'left', padding: 8 }}>Nome</th>
               <th style={{ borderBottom: '1px solid #ccc', textAlign: 'left', padding: 8 }}>Localização</th>
               <th style={{ borderBottom: '1px solid #ccc', textAlign: 'left', padding: 8 }}>ID Integração</th>
+              <th style={{ borderBottom: '1px solid #ccc', textAlign: 'left', padding: 8 }}></th>
             </tr>
           </thead>
           <tbody>
             {devices.length === 0 ? (
               <tr>
-                <td colSpan={3} style={{ padding: 8, textAlign: 'center' }}>Nenhum dispositivo cadastrado.</td>
+                <td colSpan={4} style={{ padding: 8, textAlign: 'center' }}>Nenhum dispositivo cadastrado.</td>
               </tr>
             ) : (
               devices.map((device) => (
@@ -89,6 +106,15 @@ export default function DevicesPage() {
                   <td style={{ padding: 8 }}>{device.name}</td>
                   <td style={{ padding: 8 }}>{device.location}</td>
                   <td style={{ padding: 8 }}>{device.integrationId || '-'}</td>
+                  <td style={{ padding: 8 }}>
+                    <button
+                      onClick={() => handleDelete(device.id)}
+                      disabled={deletingId === device.id}
+                      style={{ color: 'white', background: '#d32f2f', border: 'none', padding: '4px 12px', borderRadius: 4, cursor: 'pointer' }}
+                    >
+                      {deletingId === device.id ? 'Removendo...' : 'Remover'}
+                    </button>
+                  </td>
                 </tr>
               ))
             )}
