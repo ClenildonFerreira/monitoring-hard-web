@@ -3,10 +3,15 @@ import { Device } from "../types/device";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL;
 
-export async function getDevices(): Promise<Device[]> {
-  const res = await fetch(`${API_BASE}/devices`);
+export async function getDevices(page: number = 1, pageSize: number = 100): Promise<Device[]> {
+  const res = await fetch(`${API_BASE}/devices?Page=${page}&PageSize=${pageSize}`);
   if (!res.ok) throw new Error('Erro ao buscar dispositivos');
-  return res.json();
+  const data = await res.json();
+
+  if (data && Array.isArray(data.data)) {
+    return data.data;
+  }
+  return [];
 }
 
 export async function getDeviceById(id: string): Promise<Device> {

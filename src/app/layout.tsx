@@ -26,9 +26,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white`}>
         <AppHeader />
-        <div className="pt-20">{children}</div>
+        <main className="min-h-screen w-full max-w-7xl mx-auto flex flex-col justify-start pt-24 px-2 sm:px-6 lg:px-8">
+          {children}
+        </main>
       </body>
     </html>
   );
