@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getDevices, createDevice, deleteDevice } from "../../services/devices";
+import { DeviceTable } from "../../components/device-table";
+import { DeviceForm } from "../../components/device-form";
+import { getDevices, createDevice, deleteDevice, updateDevice } from "../../services/devices";
 import { Device } from "../../types/device";
 
 export default function DevicesPage() {
@@ -12,6 +14,10 @@ export default function DevicesPage() {
   const [location, setLocation] = useState("");
   const [creating, setCreating] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editLocation, setEditLocation] = useState("");
+  const [updating, setUpdating] = useState(false);
 
   const fetchDevices = async () => {
     setLoading(true);
@@ -64,62 +70,64 @@ export default function DevicesPage() {
     }
   };
 
+  const startEdit = (device: Device) => {
+    setEditingId(device.id);
+    setEditName(device.name);
+    setEditLocation(device.location);
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditName("");
+    setEditLocation("");
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingId || !editName.trim() || !editLocation.trim()) return;
+    setUpdating(true);
+    setError(null);
+    try {
+      await updateDevice(editingId, { name: editName, location: editLocation });
+      cancelEdit();
+      fetchDevices();
+    } catch (e) {
+      if (e instanceof Error) setError(e.message);
+      else setError("Erro ao atualizar dispositivo");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   return (
     <main style={{ padding: 24 }}>
       <h1>Dispositivos</h1>
-      <form onSubmit={handleSubmit} style={{ marginBottom: 24, display: 'flex', gap: 8, alignItems: 'flex-end' }}>
-        <div>
-          <label>Nome<br />
-            <input value={name} onChange={e => setName(e.target.value)} required style={{ padding: 4 }} />
-          </label>
-        </div>
-        <div>
-          <label>Localização<br />
-            <input value={location} onChange={e => setLocation(e.target.value)} required style={{ padding: 4 }} />
-          </label>
-        </div>
-        <button type="submit" disabled={creating || !name.trim() || !location.trim()} style={{ padding: '6px 16px' }}>
-          {creating ? "Adicionando..." : "Adicionar"}
-        </button>
-      </form>
+      <DeviceForm
+        name={name}
+        location={location}
+        creating={creating}
+        onNameChange={setName}
+        onLocationChange={setLocation}
+        onSubmit={handleSubmit}
+      />
       {error && <div style={{ color: 'red', marginBottom: 16 }}>{error}</div>}
       {loading ? (
         <div>Carregando dispositivos...</div>
       ) : (
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              <th style={{ borderBottom: '1px solid #ccc', textAlign: 'left', padding: 8 }}>Nome</th>
-              <th style={{ borderBottom: '1px solid #ccc', textAlign: 'left', padding: 8 }}>Localização</th>
-              <th style={{ borderBottom: '1px solid #ccc', textAlign: 'left', padding: 8 }}>ID Integração</th>
-              <th style={{ borderBottom: '1px solid #ccc', textAlign: 'left', padding: 8 }}></th>
-            </tr>
-          </thead>
-          <tbody>
-            {devices.length === 0 ? (
-              <tr>
-                <td colSpan={4} style={{ padding: 8, textAlign: 'center' }}>Nenhum dispositivo cadastrado.</td>
-              </tr>
-            ) : (
-              devices.map((device) => (
-                <tr key={device.id}>
-                  <td style={{ padding: 8 }}>{device.name}</td>
-                  <td style={{ padding: 8 }}>{device.location}</td>
-                  <td style={{ padding: 8 }}>{device.integrationId || '-'}</td>
-                  <td style={{ padding: 8 }}>
-                    <button
-                      onClick={() => handleDelete(device.id)}
-                      disabled={deletingId === device.id}
-                      style={{ color: 'white', background: '#d32f2f', border: 'none', padding: '4px 12px', borderRadius: 4, cursor: 'pointer' }}
-                    >
-                      {deletingId === device.id ? 'Removendo...' : 'Remover'}
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+        <DeviceTable
+          devices={devices}
+          editingId={editingId}
+          editName={editName}
+          editLocation={editLocation}
+          deletingId={deletingId}
+          updating={updating}
+          onEdit={startEdit}
+          onEditName={setEditName}
+          onEditLocation={setEditLocation}
+          onCancelEdit={cancelEdit}
+          onUpdate={handleUpdate}
+          onDelete={handleDelete}
+        />
       )}
     </main>
   );
