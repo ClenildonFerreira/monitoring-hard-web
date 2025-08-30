@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Monitoring Hard Web
 
-## Getting Started
+Aplicação web para monitoramento de dispositivos, construída com Next.js, Flowbite e TailwindCSS.
 
-First, run the development server:
+## Funcionalidades
+
+- **Dashboard de Dispositivos:** Visualização em tempo real dos dispositivos.
+- **CRUD de Dispositivos:** Cadastro, edição, remoção e listagem de dispositivos.
+
+## Tecnologias Utilizadas
+
+- [Next.js](https://nextjs.org/) (App Router)
+- [React](https://react.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [TailwindCSS](https://tailwindcss.com/)
+- [Flowbite](https://flowbite.com/)
+- [Lucide React](https://lucide.dev/)
+- [Recharts](https://recharts.org/) (gráficos)
+- [ESLint](https://eslint.org/) (qualidade de código)
+
+## Instalação
+
+```bash
+git clone https://github.com/ClenildonFerreira/monitoring-hard-web.git
+cd monitoring-hard-web
+npm install
+```
+
+## Configuração
+
+Crie um arquivo `.env.local` na raiz do projeto e defina a variável de ambiente da API:
+
+```
+NEXT_PUBLIC_API_URL=http://localhost:5009/api
+```
+
+## Uso
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Estrutura de Pastas
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `src/app/` - Páginas e layout principal
+- `src/components/` - Componentes reutilizáveis (tabelas, cards, formulários)
+- `src/services/` - Serviços de integração com API
+- `src/types/` - Tipagens TypeScript
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+"Vingança nunca é plena, mata a alma e a envenena."
