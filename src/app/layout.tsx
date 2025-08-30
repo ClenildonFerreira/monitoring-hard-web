@@ -28,7 +28,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white`}>
         <AppHeader />
-        <main className="min-h-screen w-full max-w-7xl mx-auto flex flex-col justify-start pt-24 px-2 sm:px-6 lg:px-8">
+        <main className="min-h-screen w-full max-w-screen-xl mx-auto flex flex-col justify-start pt-24 px-2 sm:px-6 lg:px-8">
           {children}
         </main>
       </body>
